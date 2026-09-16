@@ -35,7 +35,7 @@ export function NavRail() {
   return (
     <nav
       aria-label="Dashboard modes"
-      className="flex flex-col items-center gap-1 border-r border-[var(--border)] bg-[var(--bg)] py-3"
+      className="flex flex-row items-center gap-1 overflow-x-auto border-b border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 lg:flex-col lg:justify-start lg:overflow-visible lg:border-b-0 lg:border-r lg:px-0 lg:py-3"
     >
       {modes.map((m) => {
         const active = m.id === mode;
@@ -47,7 +47,7 @@ export function NavRail() {
             aria-pressed={active}
             aria-label={m.label}
             title={m.label}
-            className={`flex h-11 w-11 items-center justify-center rounded transition-colors ${
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded transition-colors ${
               active
                 ? "bg-[var(--elevated)] text-[var(--mint)]"
                 : "text-[var(--fg-faint)] hover:bg-[var(--surface)] hover:text-[var(--fg-muted)]"

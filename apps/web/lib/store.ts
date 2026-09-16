@@ -22,7 +22,6 @@ interface DashboardState {
   playing: boolean;
   speed: PlaybackSpeed;
   timeMs: number;
-  durationMs: number;
 
   // ui
   mode: DashboardMode;
@@ -30,21 +29,17 @@ interface DashboardState {
   selectedVehicleId: string | null;
   showDemand: boolean;
   showRepositioning: boolean;
-  panelsOpen: boolean;
 
   // actions
-  play: () => void;
   pause: () => void;
   toggle: () => void;
   setSpeed: (s: PlaybackSpeed) => void;
   seek: (ms: number) => void;
-  setDuration: (ms: number) => void;
   setMode: (m: DashboardMode) => void;
   setPolicy: (p: string) => void;
   selectVehicle: (id: string | null) => void;
   toggleDemand: () => void;
   toggleRepositioning: () => void;
-  togglePanels: () => void;
 }
 
 // Representative simulated day: 08:30 → 22:00.
@@ -55,27 +50,22 @@ export const useDashboard = create<DashboardState>((set) => ({
   playing: false,
   speed: 5,
   timeMs: DAY_START_MS,
-  durationMs: DAY_END_MS - DAY_START_MS,
 
   mode: "fleet",
   policy: "fully_optimized",
   selectedVehicleId: null,
   showDemand: false,
   showRepositioning: true,
-  panelsOpen: true,
 
-  play: () => set({ playing: true }),
   pause: () => set({ playing: false }),
   toggle: () => set((s) => ({ playing: !s.playing })),
   setSpeed: (speed) => set({ speed }),
-  seek: (ms) => set({ timeMs: Math.max(0, Math.min(ms, DAY_END_MS)) }),
-  setDuration: (durationMs) => set({ durationMs }),
+  seek: (ms) => set({ timeMs: Math.max(DAY_START_MS, Math.min(ms, DAY_END_MS)) }),
   setMode: (mode) => set({ mode }),
   setPolicy: (policy) => set({ policy }),
   selectVehicle: (selectedVehicleId) => set({ selectedVehicleId }),
   toggleDemand: () => set((s) => ({ showDemand: !s.showDemand })),
   toggleRepositioning: () => set((s) => ({ showRepositioning: !s.showRepositioning })),
-  togglePanels: () => set((s) => ({ panelsOpen: !s.panelsOpen })),
 }));
 
 /** Format a millisecond offset from midnight as HH:MM. */

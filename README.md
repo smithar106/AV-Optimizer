@@ -110,7 +110,9 @@ The web service reaches the API over Railway private networking via `API_URL`
 | 7 · Evaluation dashboard | Paired-seed comparison, exports | Reproducible results + download |
 | 8 · Portfolio release | Case study, polish, docs | Public launch |
 
-Current status: **Phase 1 complete** (foundation + deployment).
+Current status: **Phase 1 complete** (foundation + deployment), and the frontend build
+order steps **01 Landing page** and **02 Dashboard shell** are complete. See
+[docs/FRONTEND.md](docs/FRONTEND.md).
 
 ---
 

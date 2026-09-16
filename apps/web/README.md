@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AVantage Web
 
-## Getting Started
+Next.js (App Router) + TypeScript + Tailwind frontend for AVantage.
 
-First, run the development server:
+## Structure
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+app/
+  layout.tsx            Root: fonts, providers, design tokens
+  (marketing)/          Public pages with header/footer chrome
+    page.tsx            Landing
+    compare/            Strategy comparison
+    methodology/        Methodology
+  simulate/             Full-screen fleet operations command center
+components/
+  providers.tsx         TanStack Query provider
+  map/FleetPreview.tsx  Lightweight SVG fleet preview (landing + map placeholder)
+  dashboard/            AppShell, NavRail, ScenarioPanel, KpiRibbon, MapPanel,
+                        IntelligencePanel, PlaybackBar
+lib/
+  api.ts                Transport + boundary validation
+  schemas.ts            Zod schemas for every API response
+  types.ts              Shared domain types + status metadata
+  store.ts              Zustand playback + UI state (single playback clock)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## State architecture
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Server state** — scenarios, snapshots, metrics, routes, events — fetched and
+  cached with TanStack Query. Not copied into the client store.
+- **Playback state** — simulated time, speed, playing, policy — a single clock in the
+  Zustand store drives every map layer and KPI chart.
+- **UI state** — selected vehicle, active mode, overlays, panel visibility.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Development
 
-## Learn More
+```bash
+npm install
+API_URL=http://localhost:8000 npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Requires the API running on `:8000` (see `../api`).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Build
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run build   # standalone output for the Docker image
+npm run lint
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`API_URL` is read at runtime (Railway private networking); a placeholder keeps the
+build hermetic. See `../../docs/DEPLOYMENT.md`.

@@ -133,9 +133,7 @@ export function IntelligencePanel({
                 <div key={p.policy} className="py-2">
                   <div className="flex items-center justify-between">
                     <span className="text-[12px]">{p.label}</span>
-                    <span className="tabular text-[12px] text-[var(--fg-faint)]">
-                      {p.metrics ? "—" : "—"}
-                    </span>
+                    <span className="tabular text-[12px] text-[var(--fg-faint)]">—</span>
                   </div>
                 </div>
               ))}

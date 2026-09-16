@@ -7,7 +7,7 @@ import { KpiRibbon } from "./KpiRibbon";
 import { MapPanel } from "./MapPanel";
 import { IntelligencePanel } from "./IntelligencePanel";
 import { PlaybackBar } from "./PlaybackBar";
-import { useDashboard } from "@/lib/store";
+import { useDashboard, DAY_END_MS } from "@/lib/store";
 import type { CompareResult, DataManifest, DemoMeta, FleetMetrics, ScenarioSummary } from "@/lib/schemas";
 
 const POLICY_LABELS: Record<string, string> = {
@@ -33,24 +33,22 @@ export function AppShell({
   const policy = useDashboard((s) => s.policy);
   const setPolicy = useDashboard((s) => s.setPolicy);
   const playing = useDashboard((s) => s.playing);
-  const speed = useDashboard((s) => s.speed);
-  const timeMs = useDashboard((s) => s.timeMs);
-  const seek = useDashboard((s) => s.seek);
 
   // Single playback clock: advance simulated time at the selected speed.
+  // Reads live values from the store so the interval is not recreated each tick.
   useEffect(() => {
     if (!playing) return;
     const id = window.setInterval(() => {
       const s = useDashboard.getState();
       const next = s.timeMs + 1000 * s.speed;
-      if (next >= 22 * 60 * 60 * 1000) {
+      if (next >= DAY_END_MS) {
         s.pause();
       } else {
         s.seek(next);
       }
     }, 1000);
     return () => window.clearInterval(id);
-  }, [playing, speed, timeMs, seek]);
+  }, [playing]);
 
   const scenario = scenarios[0];
   const fleetSize = scenario?.fleet_size ?? demo?.fleet_size ?? 100;
@@ -82,9 +80,7 @@ export function AppShell({
 
       {/* Workspace grid: nav · scenario · map · intelligence */}
       <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[56px_minmax(0,1fr)_320px] xl:grid-cols-[56px_280px_minmax(0,1fr)_320px]">
-        <div className="hidden lg:flex">
-          <NavRail />
-        </div>
+        <NavRail />
         <div className="hidden xl:flex">
           <ScenarioPanel
             scenarios={scenarios}

@@ -85,7 +85,12 @@ events while exporting less frequent playback snapshots.
 
 ## Phase status
 
-Phase 1 (foundation) implements the service split, the API contract, the public
-frontend shell, CI, and Railway deployment. Domain modules (`simulation`,
-`optimization`, `forecasting`, `economics`, `routing`, `models`) are present as typed
-packages to be filled in Phases 2–7.
+Phase 1 (foundation) implements the service split, the API contract, CI, and Railway
+deployment. The frontend build order's steps 01 (landing page) and 02 (dashboard shell)
+are complete: the fleet operations command center, playback timeline, and interaction
+modes render against the API contract. Domain modules (`simulation`, `optimization`,
+`forecasting`, `economics`, `routing`, `models`) are present as typed packages to be
+filled in Phases 2–7.
+
+The dashboard's map currently uses the same static SVG fleet preview as the landing
+page; MapLibre and live playback arrive in Phase 6.

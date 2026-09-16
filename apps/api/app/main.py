@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import compare, exports, health, scenarios, simulations
+from app.routers import compare, demo, exports, health, scenarios, simulations
 
 app = FastAPI(
     title=settings.app_name,
@@ -31,6 +31,7 @@ app.add_middleware(
 
 API_PREFIX = "/api/v1"
 app.include_router(health.router, prefix=API_PREFIX)
+app.include_router(demo.router, prefix=API_PREFIX)
 app.include_router(scenarios.router, prefix=API_PREFIX)
 app.include_router(simulations.router, prefix=API_PREFIX)
 app.include_router(compare.router, prefix=API_PREFIX)

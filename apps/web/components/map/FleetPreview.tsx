@@ -74,9 +74,47 @@ function counts(dots: Dot[]): Record<VehicleStatus, number> {
   return out;
 }
 
-export function FleetPreview() {
+export function FleetPreview({ fill = false }: { fill?: boolean }) {
   const dots = buildFleet(100);
   const c = counts(dots);
+
+  if (fill) {
+    return (
+      <div className="absolute inset-0 bg-[#0c1420]">
+        <svg
+          viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+          preserveAspectRatio="xMidYMid slice"
+          className="h-full w-full"
+          role="img"
+          aria-label="Preview of 100 synthetic autonomous vehicles distributed across Manhattan, colored by operating status."
+        >
+          {renderIsland()}
+          {dots.map((d, i) => (
+            <circle
+              key={i}
+              cx={d.x}
+              cy={d.y}
+              r={d.r}
+              fill={STATUS_META[d.status].token}
+              opacity={d.status === "idle" ? 0.6 : 0.95}
+            />
+          ))}
+        </svg>
+        <div className="absolute bottom-3 left-3 flex flex-wrap gap-x-4 gap-y-1.5 rounded border border-[var(--border)] bg-[var(--bg)]/85 px-3 py-2 backdrop-blur-sm">
+          {(Object.keys(STATUS_META) as VehicleStatus[]).map((s) => (
+            <span key={s} className="flex items-center gap-1.5 text-[11px]">
+              <span
+                className="inline-block h-2 w-2 rounded-full"
+                style={{ background: STATUS_META[s].token }}
+              />
+              <span className="text-[var(--fg-muted)]">{STATUS_META[s].label}</span>
+              <span className="tabular text-[var(--fg)]">{c[s]}</span>
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="panel overflow-hidden">
@@ -100,52 +138,7 @@ export function FleetPreview() {
           role="img"
           aria-label="Static preview of 100 synthetic autonomous vehicles distributed across Manhattan, colored by operating status."
         >
-          {/* island envelope */}
-          <g transform={`rotate(-29 ${WIDTH / 2} ${HEIGHT / 2})`} opacity="0.9">
-            <rect
-              x={WIDTH / 2 - 232}
-              y={HEIGHT / 2 - 78}
-              width={464}
-              height={156}
-              rx={10}
-              fill="#0f1a2a"
-              stroke="var(--border)"
-            />
-            {/* avenues */}
-            {Array.from({ length: 11 }).map((_, i) => {
-              const x = WIDTH / 2 - 232 + (i + 1) * (464 / 12);
-              return (
-                <line
-                  key={`a${i}`}
-                  x1={x}
-                  y1={HEIGHT / 2 - 78}
-                  x2={x}
-                  y2={HEIGHT / 2 + 78}
-                  stroke="var(--border)"
-                  strokeWidth="1"
-                  opacity="0.55"
-                />
-              );
-            })}
-            {/* cross streets */}
-            {Array.from({ length: 5 }).map((_, i) => {
-              const y = HEIGHT / 2 - 78 + (i + 1) * (156 / 6);
-              return (
-                <line
-                  key={`s${i}`}
-                  x1={WIDTH / 2 - 232}
-                  y1={y}
-                  x2={WIDTH / 2 + 232}
-                  y2={y}
-                  stroke="var(--border)"
-                  strokeWidth="1"
-                  opacity="0.45"
-                />
-              );
-            })}
-          </g>
-
-          {/* vehicles */}
+          {renderIsland()}
           {dots.map((d, i) => (
             <circle
               key={i}
@@ -172,5 +165,51 @@ export function FleetPreview() {
         </div>
       </div>
     </div>
+  );
+}
+
+function renderIsland() {
+  return (
+    <g transform={`rotate(-29 ${WIDTH / 2} ${HEIGHT / 2})`} opacity="0.9">
+      <rect
+        x={WIDTH / 2 - 232}
+        y={HEIGHT / 2 - 78}
+        width={464}
+        height={156}
+        rx={10}
+        fill="#0f1a2a"
+        stroke="var(--border)"
+      />
+      {Array.from({ length: 11 }).map((_, i) => {
+        const x = WIDTH / 2 - 232 + (i + 1) * (464 / 12);
+        return (
+          <line
+            key={`a${i}`}
+            x1={x}
+            y1={HEIGHT / 2 - 78}
+            x2={x}
+            y2={HEIGHT / 2 + 78}
+            stroke="var(--border)"
+            strokeWidth="1"
+            opacity="0.55"
+          />
+        );
+      })}
+      {Array.from({ length: 5 }).map((_, i) => {
+        const y = HEIGHT / 2 - 78 + (i + 1) * (156 / 6);
+        return (
+          <line
+            key={`s${i}`}
+            x1={WIDTH / 2 - 232}
+            y1={y}
+            x2={WIDTH / 2 + 232}
+            y2={y}
+            stroke="var(--border)"
+            strokeWidth="1"
+            opacity="0.45"
+          />
+        );
+      })}
+    </g>
   );
 }

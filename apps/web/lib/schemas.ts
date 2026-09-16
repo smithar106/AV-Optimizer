@@ -13,6 +13,19 @@ export const healthSchema = z.object({
   environment: z.string(),
 });
 
+export const demoMetaSchema = z.object({
+  name: z.string(),
+  tagline: z.string(),
+  city: z.string(),
+  service_area: z.string(),
+  fleet_size: z.number(),
+  default_scenario_id: z.string(),
+  optimization: z.string(),
+  objective: z.string(),
+  verified: z.boolean(),
+  note: z.string(),
+});
+
 export const scenarioSummarySchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -25,6 +38,20 @@ export const scenarioSummarySchema = z.object({
 });
 
 export const scenarioListSchema = z.array(scenarioSummarySchema);
+
+export const dataManifestSchema = z.object({
+  schema_version: z.string(),
+  simulation_version: z.string(),
+  scenario_id: z.string(),
+  dataset_id: z.string(),
+  seed: z.number(),
+  dataset_checksum: z.string().nullable(),
+  generated_at: z.string().nullable(),
+  sources: z.array(
+    z.object({ name: z.string(), role: z.string(), status: z.string() }),
+  ),
+  note: z.string(),
+});
 
 export const vehicleStatusSchema = z.enum([
   "idle",
@@ -52,33 +79,82 @@ export const vehicleSnapshotSchema = z.object({
   progress: z.number(),
 });
 
-export const fleetMetricsSchema = z.object({
-  timestampMs: z.number(),
-  completedTrips: z.number(),
-  generatedRequests: z.number(),
-  realizedRevenueUsd: z.number(),
-  variableCostsUsd: z.number(),
-  contributionMarginUsd: z.number(),
-  occupiedMiles: z.number(),
-  emptyMiles: z.number(),
-  deployedVehicleHours: z.number(),
-  meanPickupEtaMinutes: z.number().nullable(),
+export const snapshotsSchema = z.object({
+  run_id: z.string(),
+  snapshots: z.array(
+    z.object({
+      timestampMs: z.number(),
+      vehicles: z.array(vehicleSnapshotSchema),
+    }),
+  ),
+  note: z.string().optional(),
 });
 
-export const simulationScenarioSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  datasetId: z.string(),
-  seed: z.number(),
-  fleetSize: z.number(),
-  policy: policySchema,
-  startTime: z.string(),
-  endTime: z.string(),
-  status: z.enum(["pending", "running", "completed", "failed"]),
+export const routesSchema = z.object({
+  run_id: z.string(),
+  routes: z.array(
+    z.object({
+      routeId: z.string(),
+      coordinates: z.array(z.tuple([z.number(), z.number()])),
+    }),
+  ),
+  note: z.string().optional(),
+});
+
+export const eventsSchema = z.object({
+  run_id: z.string(),
+  events: z.array(
+    z.object({
+      timestampMs: z.number(),
+      kind: z.string(),
+      vehicleId: z.string().nullable().optional(),
+      detail: z.string(),
+    }),
+  ),
+  note: z.string().optional(),
+});
+
+export const metricsSchema = z.object({
+  timestampMs: z.number().nullable().optional(),
+  completedTrips: z.number().nullable().optional(),
+  generatedRequests: z.number().nullable().optional(),
+  realizedRevenueUsd: z.number().nullable().optional(),
+  variableCostsUsd: z.number().nullable().optional(),
+  contributionMarginUsd: z.number().nullable().optional(),
+  occupiedMiles: z.number().nullable().optional(),
+  emptyMiles: z.number().nullable().optional(),
+  deployedVehicleHours: z.number().nullable().optional(),
+  meanPickupEtaMinutes: z.number().nullable().optional(),
+  contribution_margin_per_vehicle_hour: z.number().nullable().optional(),
+  revenue_per_vehicle_hour: z.number().nullable().optional(),
+  demand_fulfillment: z.number().nullable().optional(),
+  empty_mile_ratio: z.number().nullable().optional(),
+  utilization: z.number().nullable().optional(),
+  service_coverage: z.number().nullable().optional(),
+  energy_kwh: z.number().nullable().optional(),
+  unserved_requests: z.number().nullable().optional(),
+});
+
+export const compareSchema = z.object({
+  scenario_id: z.string(),
+  seeds: z.array(z.number()),
+  policies: z.array(
+    z.object({
+      policy: z.string(),
+      label: z.string(),
+      metrics: z.unknown().nullable(),
+    }),
+  ),
+  note: z.string().optional(),
 });
 
 export type Health = z.infer<typeof healthSchema>;
+export type DemoMeta = z.infer<typeof demoMetaSchema>;
 export type ScenarioSummary = z.infer<typeof scenarioSummarySchema>;
+export type DataManifest = z.infer<typeof dataManifestSchema>;
 export type VehicleSnapshot = z.infer<typeof vehicleSnapshotSchema>;
-export type FleetMetrics = z.infer<typeof fleetMetricsSchema>;
-export type SimulationScenario = z.infer<typeof simulationScenarioSchema>;
+export type SnapshotsResponse = z.infer<typeof snapshotsSchema>;
+export type RoutesResponse = z.infer<typeof routesSchema>;
+export type EventsResponse = z.infer<typeof eventsSchema>;
+export type FleetMetrics = z.infer<typeof metricsSchema>;
+export type CompareResult = z.infer<typeof compareSchema>;

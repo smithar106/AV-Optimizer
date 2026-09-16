@@ -70,6 +70,12 @@ def get_snapshots(run_id: str) -> dict:
     return {"run_id": run_id, "snapshots": [], "note": "Playback snapshots arrive with the Phase 6 map."}
 
 
+@router.get("/{run_id}/routes")
+def get_routes(run_id: str) -> dict:
+    _get_run(run_id)
+    return {"run_id": run_id, "routes": [], "note": "Route geometry arrives with the Phase 2 routing pipeline."}
+
+
 @router.get("/{run_id}/metrics", response_model=Metrics)
 def get_metrics(run_id: str) -> Metrics:
     _get_run(run_id)

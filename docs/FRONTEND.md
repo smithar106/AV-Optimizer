@@ -30,37 +30,46 @@ neon. Mint is reserved for meaningful actions.
 
 ## Dashboard layout
 
-Desktop-first at 1440px; responsive down to mobile. The workspace is a CSS grid:
+A single, scannable command center with clear sections rather than a panel for every
+metric. Controls are deliberately minimal: one policy selector and the playback
+controls.
 
-```
-nav(56px) · scenario(280px) · map(flex) · intelligence(320px)
-```
-
-with a header, a KPI ribbon, and a bottom playback timeline + event stream.
-
-| Breakpoint | Behavior |
+| Section | Value |
 | --- | --- |
-| ≥1280px | Full four-column command center |
-| 1024–1279px | Scenario panel hidden; nav + map + intelligence |
-| <1024px | Map + KPI + timeline; mode rail becomes a horizontal row |
+| Header | Brand, scenario, policy selector (optimized / nearest feasible) |
+| KPI row | Margin / veh-hr, contribution, served, fulfillment, empty-mile ratio, ETA |
+| Fleet operations | The map (hero) plus a status breakdown |
+| Simulated day | Play/pause, speed, scrub, and the next 45 minutes of requests |
+| Performance | Baseline vs optimized comparison with deltas |
+| Trip records | The 1,000-record synthetic dataset, filtered by policy |
+
+Responsive: a single column on mobile, two columns for the map and comparison at
+`lg`. The map preview is a static SVG until MapLibre lands (Phase 6).
 
 ## Component responsibilities
 
 | Component | Responsibility | Data source |
 | --- | --- | --- |
-| AppShell | Responsive dashboard layout | UI state |
-| NavRail | Interaction modes | UI state |
-| ScenarioPanel | Configuration + assumptions | Scenario API |
-| KpiRibbon | Primary performance metrics | Simulation metrics |
-| MapPanel / FleetPreview | Vehicle positions and status | Playback snapshots (Phase 6) |
-| IntelligencePanel | Fleet status, vehicle drawer, mode content | Vehicle + event data |
-| PlaybackBar | Play, pause, speed, scrub, event stream | Playback state |
+| Dashboard | Layout + policy selection + playback clock | UI state |
+| KpiRow | Primary performance metrics | `/metrics` |
+| FleetMap | Fleet preview + status breakdown | Static preview |
+| Timeline | Playback controls + upcoming requests | Playback state + records |
+| PerformancePanel | Baseline vs optimized comparison | `/metrics` |
+| RecordsTable | Trip-level records | `/records` |
 
 ## State architecture
 
-Server state (TanStack Query) is kept separate from playback state and UI state
-(Zustand). A single playback clock drives every map layer and KPI chart — there are no
-separate timers for the map, charts, and event stream.
+Server state (TanStack Query / server components) is kept separate from playback
+state and selection state (Zustand). A single playback clock drives the timeline and
+the upcoming-requests list — there are no separate timers.
+
+## Demo dataset
+
+`apps/api/data/trips.json` holds 1,000 synthetic trip records: 500 requests evaluated
+under both the nearest-feasible baseline and the demand-aware optimized policy (paired
+by `request_id`). It is generated deterministically by
+`pipelines/generate_demo.py` and served by `GET /api/v1/records` and
+`GET /api/v1/metrics`.
 
 ## Accessibility
 

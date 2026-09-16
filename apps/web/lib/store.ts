@@ -1,45 +1,26 @@
 /**
- * Shared UI + playback state (Zustand).
+ * Dashboard playback + selection state (Zustand).
  *
- * Server state (scenarios, snapshots, metrics, routes) lives in TanStack Query and
- * is deliberately NOT copied here. This store holds only client state: the playback
- * clock and the UI selection. A single playback clock drives every map layer and KPI
- * chart — there are no separate timers.
+ * Server data (records, metrics) lives in TanStack Query / server components and is
+ * deliberately not copied here. This store holds only the playback clock and the
+ * selected strategy, so a single clock drives the timeline and the trip list.
  */
 import { create } from "zustand";
 
-export type DashboardMode =
-  | "fleet"
-  | "demand"
-  | "decisions"
-  | "revenue"
-  | "comparison";
-
 export type PlaybackSpeed = 1 | 5 | 20 | 60;
+export type Strategy = "baseline" | "optimized";
 
 interface DashboardState {
-  // playback
   playing: boolean;
   speed: PlaybackSpeed;
   timeMs: number;
+  strategy: Strategy;
 
-  // ui
-  mode: DashboardMode;
-  policy: string;
-  selectedVehicleId: string | null;
-  showDemand: boolean;
-  showRepositioning: boolean;
-
-  // actions
   pause: () => void;
   toggle: () => void;
   setSpeed: (s: PlaybackSpeed) => void;
   seek: (ms: number) => void;
-  setMode: (m: DashboardMode) => void;
-  setPolicy: (p: string) => void;
-  selectVehicle: (id: string | null) => void;
-  toggleDemand: () => void;
-  toggleRepositioning: () => void;
+  setStrategy: (s: Strategy) => void;
 }
 
 // Representative simulated day: 08:30 → 22:00.
@@ -50,22 +31,13 @@ export const useDashboard = create<DashboardState>((set) => ({
   playing: false,
   speed: 5,
   timeMs: DAY_START_MS,
-
-  mode: "fleet",
-  policy: "fully_optimized",
-  selectedVehicleId: null,
-  showDemand: false,
-  showRepositioning: true,
+  strategy: "optimized",
 
   pause: () => set({ playing: false }),
   toggle: () => set((s) => ({ playing: !s.playing })),
   setSpeed: (speed) => set({ speed }),
   seek: (ms) => set({ timeMs: Math.max(DAY_START_MS, Math.min(ms, DAY_END_MS)) }),
-  setMode: (mode) => set({ mode }),
-  setPolicy: (policy) => set({ policy }),
-  selectVehicle: (selectedVehicleId) => set({ selectedVehicleId }),
-  toggleDemand: () => set((s) => ({ showDemand: !s.showDemand })),
-  toggleRepositioning: () => set((s) => ({ showRepositioning: !s.showRepositioning })),
+  setStrategy: (strategy) => set({ strategy }),
 }));
 
 /** Format a millisecond offset from midnight as HH:MM. */

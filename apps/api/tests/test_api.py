@@ -55,3 +55,22 @@ def test_compare_contract() -> None:
     resp = client.post("/api/v1/compare", json={"scenario_id": "nyc-manhattan-weekday-100av"})
     assert resp.status_code == 200
     assert len(resp.json()["policies"]) == 2
+
+
+def test_records_and_metrics() -> None:
+    resp = client.get("/api/v1/records", params={"limit": 10})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["total"] == 1000
+    assert len(body["rows"]) == 10
+
+    only = client.get("/api/v1/records", params={"strategy": "optimized", "limit": 5})
+    assert only.status_code == 200
+    assert all(r["strategy"] == "optimized" for r in only.json()["rows"])
+
+    metrics = client.get("/api/v1/metrics")
+    assert metrics.status_code == 200
+    m = metrics.json()
+    assert m["baseline"]["demand_fulfillment"] is not None
+    assert m["optimized"]["demand_fulfillment"] > m["baseline"]["demand_fulfillment"]
+    assert m["optimized"]["empty_mile_ratio"] < m["baseline"]["empty_mile_ratio"]

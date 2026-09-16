@@ -134,7 +134,6 @@ export const metricsSchema = z.object({
   energy_kwh: z.number().nullable().optional(),
   unserved_requests: z.number().nullable().optional(),
 });
-
 export const compareSchema = z.object({
   scenario_id: z.string(),
   seeds: z.array(z.number()),
@@ -148,6 +147,62 @@ export const compareSchema = z.object({
   note: z.string().optional(),
 });
 
+export const tripRecordSchema = z.object({
+  record_id: z.number(),
+  request_id: z.number(),
+  strategy: z.enum(["baseline", "optimized"]),
+  request_time: z.string(),
+  origin_zone: z.number(),
+  origin_name: z.string(),
+  destination_zone: z.number(),
+  destination_name: z.string(),
+  distance_mi: z.number(),
+  duration_min: z.number(),
+  fare_usd: z.number(),
+  pickup_eta_min: z.number(),
+  empty_miles: z.number(),
+  total_miles: z.number(),
+  served: z.boolean(),
+  contribution_usd: z.number(),
+});
+
+export const recordsResponseSchema = z.object({
+  total: z.number(),
+  limit: z.number(),
+  offset: z.number(),
+  rows: z.array(tripRecordSchema),
+});
+
+const strategyMetricsSchema = z.object({
+  strategy: z.string(),
+  generated_requests: z.number(),
+  served: z.number(),
+  unserved: z.number(),
+  demand_fulfillment: z.number().nullable(),
+  revenue_usd: z.number().nullable(),
+  contribution_usd: z.number().nullable(),
+  contribution_per_vehicle_hour: z.number().nullable(),
+  empty_mile_ratio: z.number().nullable(),
+  avg_pickup_eta_min: z.number().nullable(),
+  p90_pickup_eta_min: z.number().nullable(),
+  total_miles: z.number().nullable(),
+  energy_kwh: z.number().nullable(),
+});
+
+export const metricsSummarySchema = z.object({
+  dataset_id: z.string().nullable(),
+  fleet_size: z.number().nullable(),
+  day_hours: z.number().nullable(),
+  baseline: strategyMetricsSchema,
+  optimized: strategyMetricsSchema,
+  deltas: z.object({
+    contribution_usd: z.number(),
+    demand_fulfillment: z.number(),
+    empty_mile_ratio: z.number(),
+    avg_pickup_eta_min: z.number(),
+  }),
+});
+
 export type Health = z.infer<typeof healthSchema>;
 export type DemoMeta = z.infer<typeof demoMetaSchema>;
 export type ScenarioSummary = z.infer<typeof scenarioSummarySchema>;
@@ -158,3 +213,6 @@ export type RoutesResponse = z.infer<typeof routesSchema>;
 export type EventsResponse = z.infer<typeof eventsSchema>;
 export type FleetMetrics = z.infer<typeof metricsSchema>;
 export type CompareResult = z.infer<typeof compareSchema>;
+export type TripRecord = z.infer<typeof tripRecordSchema>;
+export type RecordsResponse = z.infer<typeof recordsResponseSchema>;
+export type MetricsSummary = z.infer<typeof metricsSummarySchema>;

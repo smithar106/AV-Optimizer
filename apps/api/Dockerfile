@@ -10,6 +10,7 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
+COPY data ./data
 
 # Railway provides $PORT; default to 8000 for local docker runs.
 ENV PORT=8000

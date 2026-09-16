@@ -16,6 +16,8 @@ import {
   eventsSchema,
   healthSchema,
   metricsSchema,
+  metricsSummarySchema,
+  recordsResponseSchema,
   routesSchema,
   scenarioListSchema,
   snapshotsSchema,
@@ -25,6 +27,8 @@ import {
   type EventsResponse,
   type FleetMetrics,
   type Health,
+  type MetricsSummary,
+  type RecordsResponse,
   type RoutesResponse,
   type ScenarioSummary,
   type SnapshotsResponse,
@@ -61,6 +65,16 @@ export function getScenarios(): Promise<ScenarioSummary[]> {
 
 export function getDataManifest(): Promise<DataManifest> {
   return get("/data-manifest", (d) => dataManifestSchema.parse(d), 60);
+}
+
+export function getMetricsSummary(): Promise<MetricsSummary> {
+  return get("/metrics", (d) => metricsSummarySchema.parse(d), 60);
+}
+
+export function getRecords(strategy?: string, limit = 100, offset = 0): Promise<RecordsResponse> {
+  const params = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+  if (strategy) params.set("strategy", strategy);
+  return get(`/records?${params}`, (d) => recordsResponseSchema.parse(d), 60);
 }
 
 export function getMetrics(runId: string): Promise<FleetMetrics> {

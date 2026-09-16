@@ -1,39 +1,33 @@
-import { AppShell } from "@/components/dashboard/AppShell";
-import { getDataManifest, getDemo, getScenarios } from "@/lib/api";
-import type {
-  CompareResult,
-  DataManifest,
-  DemoMeta,
-  FleetMetrics,
-  ScenarioSummary,
-} from "@/lib/schemas";
+import { Dashboard } from "@/components/dashboard/Dashboard";
+import { getMetricsSummary, getRecords, getScenarios } from "@/lib/api";
+import type { MetricsSummary, ScenarioSummary, TripRecord } from "@/lib/schemas";
 
 export const dynamic = "force-dynamic";
 
 export default async function SimulatePage() {
+  let summary: MetricsSummary | null = null;
+  let records: TripRecord[] = [];
   let scenarios: ScenarioSummary[] = [];
-  let demo: DemoMeta | null = null;
-  let manifest: DataManifest | null = null;
-  const metrics: FleetMetrics | null = null; // populated when a run completes
-  const comparison: CompareResult | null = null;
 
   try {
-    [scenarios, demo, manifest] = await Promise.all([
+    [summary, records, scenarios] = await Promise.all([
+      getMetricsSummary(),
+      getRecords(undefined, 1000, 0).then((r) => r.rows),
       getScenarios(),
-      getDemo(),
-      getDataManifest(),
     ]);
   } catch {
-    // The shell still renders with empty states if the API is unreachable.
+    // The dashboard renders empty states if the API is unreachable.
   }
 
+  const scenarioName = scenarios[0]?.name ?? "Manhattan weekday · 100 AVs";
+  const fleetSize = summary?.fleet_size ?? scenarios[0]?.fleet_size ?? 100;
+
   return (
-    <AppShell
-      scenarios={scenarios}
-      demo={demo}
-      manifest={manifest}
-      metrics={metrics}
-      comparison={comparison}
+    <Dashboard
+      summary={summary}
+      records={records}
+      scenarioName={scenarioName}
+      fleetSize={fleetSize}
     />
   );
 }

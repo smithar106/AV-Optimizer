@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0b0d10;
+  --bg-elevated: #14171c;
+  --bg-panel: #171b21;
+  --border: #262b33;
+  --border-strong: #363c46;
+  --fg: #e6e8eb;
+  --fg-muted: #9aa1ab;
+  --fg-faint: #6b7280;
+  --accent: #e4b343;
+  --accent-soft: #2a2313;
+  --green: #4ec98a;
+  --green-soft: #10241a;
+  --red: #e5534b;
+  --red-soft: #2a1414;
+  --blue: #5b9bd5;
+  --blue-soft: #101d2a;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-panel: var(--bg-panel);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-faint: var(--fg-faint);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-green: var(--green);
+  --color-red: var(--red);
+  --color-blue: var(--blue);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+body {
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.tabular {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.hairline {
+  border-color: var(--border);
+}

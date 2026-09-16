@@ -2,10 +2,14 @@
  * API client.
  *
  * Resolution order for the base URL:
- *   1. API_URL              — server-side, Railway private networking (e.g. http://avantage-api.railway.internal)
+ *   1. API_URL              — server-side, Railway private networking
  *   2. NEXT_PUBLIC_API_URL  — browser-accessible URL
  *   3. http://localhost:8000 — local development
+ *
+ * Responses are validated with Zod at the boundary (see lib/schemas.ts).
  */
+import { healthSchema, scenarioListSchema, type Health, type ScenarioSummary } from "./schemas";
+
 const BASE_URL =
   process.env.API_URL ??
   process.env.NEXT_PUBLIC_API_URL ??
@@ -13,34 +17,16 @@ const BASE_URL =
 
 export const API_BASE = BASE_URL;
 
-export type Health = {
-  status: string;
-  service: string;
-  version: string;
-  environment: string;
-};
-
-export type Scenario = {
-  id: string;
-  name: string;
-  city: string;
-  service_area: string;
-  fleet_size: number;
-  strategy: "baseline" | "optimized";
-  seed: number;
-  description: string;
-};
-
-async function get<T>(path: string, revalidate = 30): Promise<T> {
+async function get<T>(path: string, parse: (data: unknown) => T, revalidate = 30): Promise<T> {
   const res = await fetch(`${BASE_URL}/api/v1${path}`, { next: { revalidate } });
   if (!res.ok) throw new Error(`API ${path} -> ${res.status}`);
-  return (await res.json()) as T;
+  return parse(await res.json());
 }
 
 export function getHealth(): Promise<Health> {
-  return get<Health>("/health", 10);
+  return get("/health", (d) => healthSchema.parse(d), 10);
 }
 
-export function getScenarios(): Promise<Scenario[]> {
-  return get<Scenario[]>("/scenarios", 60);
+export function getScenarios(): Promise<ScenarioSummary[]> {
+  return get("/scenarios", (d) => scenarioListSchema.parse(d), 60);
 }

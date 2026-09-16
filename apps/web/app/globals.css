@@ -1,38 +1,48 @@
 @import "tailwindcss";
 
+/* AVantage design tokens — Midnight navy · Slate · Electric mint · Signal blue · Amber · Coral */
 :root {
-  --bg: #0b0d10;
-  --bg-elevated: #14171c;
-  --bg-panel: #171b21;
-  --border: #262b33;
-  --border-strong: #363c46;
-  --fg: #e6e8eb;
-  --fg-muted: #9aa1ab;
-  --fg-faint: #6b7280;
-  --accent: #e4b343;
-  --accent-soft: #2a2313;
-  --green: #4ec98a;
-  --green-soft: #10241a;
-  --red: #e5534b;
-  --red-soft: #2a1414;
-  --blue: #5b9bd5;
-  --blue-soft: #101d2a;
+  /* Surfaces */
+  --bg: #101827;
+  --surface: #172337;
+  --elevated: #213149;
+  --border: #26364f;
+  --border-strong: #35486a;
+
+  /* Semantic color */
+  --mint: #3be3b2;      /* optimization, success, primary actions */
+  --blue: #579bff;      /* passenger trips */
+  --amber: #f6b84b;     /* repositioning */
+  --purple: #b69cff;    /* charging */
+  --red: #f87171;       /* unserved demand, alerts */
+
+  /* Text */
+  --fg: #f8fafc;
+  --fg-muted: #a8b6ca;
+  --fg-faint: #6d7d94;
+
+  /* Soft fills */
+  --mint-soft: #102c26;
+  --blue-soft: #13233d;
+  --amber-soft: #2c2413;
+  --purple-soft: #241f38;
+  --red-soft: #2c1719;
 }
 
 @theme inline {
   --color-bg: var(--bg);
-  --color-bg-elevated: var(--bg-elevated);
-  --color-bg-panel: var(--bg-panel);
+  --color-surface: var(--surface);
+  --color-elevated: var(--elevated);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
+  --color-mint: var(--mint);
+  --color-blue: var(--blue);
+  --color-amber: var(--amber);
+  --color-purple: var(--purple);
+  --color-red: var(--red);
   --color-fg: var(--fg);
   --color-fg-muted: var(--fg-muted);
   --color-fg-faint: var(--fg-faint);
-  --color-accent: var(--accent);
-  --color-accent-soft: var(--accent-soft);
-  --color-green: var(--green);
-  --color-red: var(--red);
-  --color-blue: var(--blue);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -46,19 +56,46 @@ body {
 body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
+/* Tabular numerals for financial and operational metrics */
 .tabular {
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
 }
 
 .panel {
-  background: var(--bg-panel);
+  background: var(--surface);
   border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.panel-elevated {
+  background: var(--elevated);
+  border: 1px solid var(--border-strong);
   border-radius: 6px;
 }
 
 .hairline {
   border-color: var(--border);
+}
+
+/* Accessible focus */
+:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

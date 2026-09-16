@@ -4,8 +4,8 @@ import { getScenarios } from "@/lib/api";
 export const dynamic = "force-dynamic";
 
 const fleetStatus = [
-  { label: "Available", value: "—", tone: "var(--green)" },
-  { label: "Passenger trips", value: "—", tone: "var(--accent)" },
+  { label: "Available", value: "—", tone: "var(--mint)" },
+  { label: "Passenger trips", value: "—", tone: "var(--mint)" },
   { label: "Repositioning", value: "—", tone: "var(--blue)" },
   { label: "Charging", value: "—", tone: "var(--fg-muted)" },
 ];
@@ -66,7 +66,7 @@ export default async function SimulatePage() {
                 key={t}
                 className={`-mb-px border-b-2 py-3 text-[13px] ${
                   i === 0
-                    ? "border-[var(--accent)] text-[var(--fg)]"
+                    ? "border-[var(--mint)] text-[var(--fg)]"
                     : "border-transparent text-[var(--fg-muted)]"
                 }`}
               >
@@ -109,7 +109,7 @@ export default async function SimulatePage() {
                   key={s}
                   className={`rounded px-2 py-1 ${
                     i === 0
-                      ? "bg-[var(--bg-elevated)] text-[var(--fg)]"
+                      ? "bg-[var(--elevated)] text-[var(--fg)]"
                       : "text-[var(--fg-muted)]"
                   }`}
                 >
@@ -117,8 +117,8 @@ export default async function SimulatePage() {
                 </button>
               ))}
             </div>
-            <div className="h-1 flex-1 min-w-[120px] rounded bg-[var(--bg-elevated)]">
-              <div className="h-1 w-[35%] rounded bg-[var(--accent)]" />
+            <div className="h-1 flex-1 min-w-[120px] rounded bg-[var(--elevated)]">
+              <div className="h-1 w-[35%] rounded bg-[var(--mint)]" />
             </div>
             <span className="tabular text-[var(--fg-faint)]">08:30 / 22:00</span>
             <div className="flex items-center gap-3 text-[var(--fg-muted)]">
@@ -175,7 +175,7 @@ export default async function SimulatePage() {
             <div className="mt-1 text-[13px]">{scenarioName}</div>
             <Link
               href="/compare"
-              className="mt-3 inline-block text-[12px] text-[var(--accent)] hover:opacity-90"
+              className="mt-3 inline-block text-[12px] text-[var(--mint)] hover:opacity-90"
             >
               Compare against baseline →
             </Link>
